@@ -1,17 +1,21 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: matrodri <matrodri@student.42sp.org.br>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/09/08 17:44:14 by matrodri          #+#    #+#             */
-/*   Updated: 2021/09/14 18:00:18 by matrodri         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+/* ************************************************************ */
+/*                                                              */
+/*             ╓▀▀▀▀▀▀▄                 :::      ::::::::       */
+/*            █▀      ▐               :+:      :+:    :+:       */
+/*            █   ▀   ▓█            +:+ +:+         +:+         */
+/*            █      █▓▓▓▓█       +#+  +:+       +#+            */
+/*    ▄▄ ▄▄▄███████─▄▀█▀▀       +#+#+#+#+#+   +#+               */
+/*    █ ███████████▄██ ██             #+#    #+#                */
+/*    █  █▀▀   ██████████▌           ###   ########.fr          */
+/*    █  ▀▄▄    ▀████████▌                                      */
+/*     ▀█   ▀ ▄▄▄████████▌      42cursus | MCoscia | matrodri   */
+/*        ▀▀  ▄▄▄▄▄▄▄▄▄█▀       quack quack |  vila pescopata   */
+/*                                                              */
+/* ************************************************************ */
 
 #include "get_next_line.h"
 
+/*	localizar a linha que deverá ser lida em nosso fd */
 char	*get_line(char *src, int fd)
 {
 	char	*buffer;
@@ -24,15 +28,19 @@ char	*get_line(char *src, int fd)
 		return (NULL);
 	}
 	size = 1;
+/*	enquanto procuramos nosso caractere '\n' */
 	while (!ft_strchr(src, '\n') && size != 0)
 	{
+/*	verificar os bytes lidos e, caso não tenha ocorrido nenhum erro, salvar a quantidade de bytes lidos */
 		size = read(fd, buffer, BUFFER_SIZE);
 		if (size == -1)
 		{
 			free(buffer);
 			return (NULL);
 		}
+/*	adicionar um caractere nulo a ultima posicao armazenada em nosso buffer */
 		buffer[size] = '\0';
+/*	concatenar nossas string */
 		src = ft_strjoin(src, buffer);
 	}
 	free(buffer);
@@ -47,10 +55,13 @@ char	*get_next_line(int fd)
 	line = NULL;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (0);
+/*	ler nossa linha em busca do caractere '\n' ou de qualquer erro*/
 	next_line = get_line(next_line, fd);
 	if (next_line == NULL)
 		return (NULL);
+/*	retornar a linha que foi "lida" */
 	line = ft_read_line(next_line);
+/*	salvar todo conteudo que ainda nao foi lido de nosso fd */
 	next_line = ft_save(next_line);
 	if (line[0] == '\0')
 	{
@@ -58,37 +69,6 @@ char	*get_next_line(int fd)
 		free(line);
 		return (NULL);
 	}
+/*	retornar nossa linha que foi "lida" */
 	return (line);
 }
-
-/*#include <stdio.h>
-#include <fcntl.h>
-int    main(void)
-{
-    char    *line;
-    int        i;
-//    int        fd1;
-    int        fd2;
-//    int        fd3;
-//    fd1 = open("test.txt", O_RDONLY);
-    fd2 = open("test2.txt", O_RDONLY);
-//    fd3 = open("test3.txt", O_RDONLY);
-    i = 1;
-    while (i < 7)
-    {
-//        line = get_next_line(fd1);
-//        printf("line [%02d] test1: %s", i, line);
-//        free(line);
-        line = get_next_line(fd2);
-        printf("line [%02d] test2: %s", i, line);
-//        free(line);
-//        line = get_next_line(fd3);
-//        printf("line [%02d] test2: %s", i, line);
-        free(line);
-        i++;
-    }
-//    close(fd1);
-    close(fd2);
-//    close(fd3);
-    return (0);
-}*/
